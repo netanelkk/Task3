@@ -13,28 +13,24 @@ namespace Task3_Server.Controllers
         // Add New Ingredient
         public IHttpActionResult Post([FromBody] Ingredient value)
         {
-            try
+            if(Ingredient.AddIngredient(value))
             {
-                DatabaseMock.ingredients.Add(value);
                 return Ok("Success");
             }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+
+            return BadRequest("Error while inserting object");
         }
 
         // Get All Ingredients
         public IHttpActionResult Get()
         {
-            try
+            List<Ingredient> ingredients = Ingredient.GetIngredients();
+            if(ingredients != null)
             {
-                return Ok(DatabaseMock.ingredients);
+                return Ok(ingredients);
             }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+
+            return BadRequest("Error while fetching object");
         }
     }
 }

@@ -18,6 +18,11 @@
   padding: 15px 0;
 }
 
+.App-header a {
+  text-decoration:none;
+  color:black;
+}
+
 .App-header button {
   margin: 0 20px;
 }

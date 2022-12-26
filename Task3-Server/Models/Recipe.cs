@@ -7,18 +7,12 @@ namespace Task3_Server.Models
 {
     public class Recipe
     {
-        private static int index = 1;
         private int id;
         private string name;
         private string image;
         private string cookingMethod;
         private int time;
         private List<Ingredient> ingredients;
-
-        public Recipe(string name, string image, string cookingMethod, int time) : this(index++, name, image, cookingMethod, time)
-        {
-
-        }
 
         public Recipe(int id, string name, string image, string cookingMethod, int time) 
         {
@@ -28,6 +22,18 @@ namespace Task3_Server.Models
             this.cookingMethod = cookingMethod;
             this.time = time;
             ingredients = new List<Ingredient>();
+        }
+
+        public static List<Recipe> GetRecipes()
+        {
+            DataServices ds = new DataServices();
+            return ds.GetRecipes();
+        }
+
+        public static bool AddRecipe(PostRecipe recipe)
+        {
+            DataServices ds = new DataServices();
+            return ds.CreateRecipe(recipe);
         }
 
         public void AddIngredient(Ingredient ingredient)
