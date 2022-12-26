@@ -10,73 +10,6 @@ namespace Task3_Server.Models
 {
     public class DataServices
     {
-        /*
-        public static List<Ingredient> ingredients = new List<Ingredient>()
-        {
-            new Ingredient("Flour", "https://res.cloudinary.com/shufersal/image/upload/f_auto,q_auto/v1551800922/prod/product_images/products_large/HIF56_L_P_7296073021568_1.png", 465),
-            new Ingredient("Bread Crumbs", "https://res.cloudinary.com/shufersal/image/upload/f_auto,q_auto/v1551800922/prod/product_images/products_large/RXI60_L_P_7296073081449_1.png", 230),
-            new Ingredient("Chicken Breast", "https://d3m9l0v76dty0.cloudfront.net/system/photos/4825229/large/e69015678acf1306cbdb280703488336.jpg", 344),
-        };
-
-        private static List<Recipe> recipes = new List<Recipe>()
-         {
-            new Recipe("Schnizel", "https://www.tavshilim.co.il/wp-content/uploads/2016/03/IMG_7878.jpg", "Frying", 30)
-         };
-        
-
-        private static List<IngredientsInRecipes> ingredientsInRecipes = new List<IngredientsInRecipes>()      
-         {
-            new IngredientsInRecipes(recipes[0].Id, ingredients[0].Id),
-            new IngredientsInRecipes(recipes[0].Id, ingredients[1].Id),
-            new IngredientsInRecipes(recipes[0].Id, ingredients[2].Id)
-        };
-
-
-        // Adding ingredients to every recipe, and returning list of all recipes
-        public static List<Recipe> GetRecipes()
-        {
-            foreach (Recipe recipe in recipes)
-            {
-                recipe.ClearIngredients(); // To avoid duplications
-                foreach(IngredientsInRecipes ir in ingredientsInRecipes)
-                {
-                    if(ir.RecipeId == recipe.Id)
-                    {
-                        recipe.AddIngredient(GetIngredientById(ir.IngredientId));
-                    }
-                }
-            }
-            return recipes;
-        }
-
-        // Adding new recipe object, and ingredients in that recipe
-        public static void AddRecipe(PostRecipe postrecipe)
-        {
-            Recipe newrecipe = new Recipe(postrecipe.Name,
-                       postrecipe.Image,
-                       postrecipe.CookingMethod,
-                       postrecipe.Time);
-            recipes.Add(newrecipe);
-
-            for (int i = 0; i < postrecipe.Ingredients_ids.Length; i++)
-            {
-                ingredientsInRecipes.Add(new IngredientsInRecipes(newrecipe.Id, postrecipe.Ingredients_ids[i]));
-            }
-        }
-
-        private static Ingredient GetIngredientById(int id)
-        {
-            foreach(Ingredient ing in ingredients)
-            {
-                if(ing.Id == id)
-                {
-                    return ing;
-                }
-            }
-            return null;
-        }
-
-        */
 
         // Add new ingredient
         public bool CreateRecipe(PostRecipe recipe)
@@ -167,11 +100,13 @@ namespace Task3_Server.Models
                 {
                     while (dr.Read())
                     {
-                        recipes.Add(new Recipe(int.Parse(dr["id"].ToString()),
-                                                 dr["name"].ToString(),
-                                                 dr["image"].ToString(),
-                                                 dr["cookingMethod"].ToString(),
-                                                 int.Parse(dr["time"].ToString())));
+                            Recipe recipe = new Recipe(int.Parse(dr["id"].ToString()),
+                         dr["name"].ToString(),
+                         dr["image"].ToString(),
+                         dr["cookingMethod"].ToString(),
+                         int.Parse(dr["time"].ToString()));
+                            GetIngredientInRecipe(recipe);
+                            recipes.Add(recipe);
                     }
                 }
 
@@ -193,9 +128,15 @@ namespace Task3_Server.Models
             }
         }
 
-        private void AssignIngredientsToRecipe(Recipe recipe, SqlConnection con)
+        // Assign ingredients to a recipe
+        private void GetIngredientInRecipe(Recipe recipe)
         {
+            SqlConnection con = Connect();
+
             SqlCommand command = new SqlCommand();
+
+            command.Parameters.AddWithValue("recipeId", recipe.Id);
+
             command.CommandText = "spGetIngredientInRecipe";
             command.Connection = con;
             command.CommandType = CommandType.StoredProcedure;
@@ -205,10 +146,17 @@ namespace Task3_Server.Models
             {
                 while (dr.Read())
                 {
-                    recipe.Ingredients.Add(int.Parse(dr["ingredientId"].ToString()));
+                    recipe.AddIngredient(new Ingredient(int.Parse(dr["id"].ToString()),
+                                                        dr["name"].ToString(),
+                                                        dr["image"].ToString(),
+                                                        int.Parse(dr["calories"].ToString())
+                                         ));
                 }
             }
+
+            con.Close();
         }
+
 
         // Add new ingredient
         public bool InsertIngredient(Ingredient ingredient)

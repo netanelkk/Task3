@@ -7,11 +7,11 @@ import CardMedia from '@mui/material/CardMedia';
 import Box from '@mui/material/Box';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-
+import Grid from '@mui/material/Grid';
 
 const Ingredient = ({ingredient}) => {
   return (
-    <Card sx={{ display: 'flex', margin: '20px 10px' }} key={ingredient["Name"]}>
+    <Card sx={{ display: 'flex', margin: '20px 10px', alignItems: 'center' }} key={ingredient["Name"]}>
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <CardContent sx={{ flex: '1 0 auto' }}>
         <Typography component="div" variant="h5">
@@ -24,7 +24,7 @@ const Ingredient = ({ingredient}) => {
     </Box>
     <CardMedia
       component="img"
-      sx={{ height: 151 }}
+      sx={{ height: 100 }}
       image={ingredient["Image"]}
       alt={ingredient["Name"]}
     />
@@ -34,7 +34,7 @@ const Ingredient = ({ingredient}) => {
 
 export default function Home() {
   const [recipesList, setRecipesList] = useState();
-  const [totalCalories, setTotalCalories] = useState(0);
+  const [totalCalories, setTotalCalories] = useState([]);
   useEffect(() => {
     const loadRecipes = async () => {
         try {
@@ -50,23 +50,27 @@ export default function Home() {
 }, []);
 
 const sumCalories = (result) => {
-  let total = 0;
   for(const recipe of result) {
+    let total = 0;
     for(const ingredient of recipe["Ingredients"]) {
       total += ingredient["Calories"];
     }
+    setTotalCalories(totalCalories => [...totalCalories, total]);
   }
 
-  setTotalCalories(total);
+
 }
+
+
   return (
     <div>
         <h1>My Kitchen</h1>
         {recipesList == null ? <CircularProgress /> : "" }
         {(recipesList != null && recipesList.length == 0) ? <Alert severity="info">No Recipes Were Found</Alert> : ""}
-        {(recipesList != null && recipesList.length > 0) ? <>
-              {recipesList.map((recipe) => (
-                    <Card sx={{ maxWidth: 345 }} key={recipe["Name"]}>
+        {(recipesList != null && recipesList.length > 0) ? <div id="all-recipes"><Grid container spacing={2}>
+              {recipesList.map((recipe,index) => (
+                <Grid item xl={3} lg={4} sm={6} xs={12}>
+                    <Card sx={{ display: 'inline-block', width: 345, margin: "10px 15px" }} key={recipe["Name"]}>
                     <CardMedia
                       sx={{ height: 240 }}
                       image={recipe["Image"]}
@@ -79,8 +83,8 @@ const sumCalories = (result) => {
                       <Typography variant="body2" color="text.secondary">
                         <b>Time:</b> {recipe["Time"]} Minutes <br />
                         <b>Cooking Method:</b> {recipe["CookingMethod"]} <br />
-                        <b>Total Calories:</b> {totalCalories} <br /><br />
-                        <u>Ingredients</u> <br />
+                        <b>Total Calories:</b> {totalCalories[index]} <br /><br />
+                        <b>Ingredients:</b> <br />
                         {recipe["Ingredients"].map((ingredient) => (
                           <>
                           <Ingredient ingredient={ingredient} key={recipe["Name"]} />
@@ -88,9 +92,10 @@ const sumCalories = (result) => {
                         ))}
                       </Typography>
                     </CardContent>
-                  </Card>
+                    </Card>
+                  </Grid>
               ))}
-            </>
+              </Grid></div>
         : ""}
         
     </div>

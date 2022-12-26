@@ -30,7 +30,6 @@ export default function Recipe() {
         const loadIngredients = async () => {
             try {
                 const ings = await getIngredients();
-                console.log(ings);
                 if(ings.length > 0) {
                     setIngredientsList(ings);
                     setLoading(false);

@@ -170,7 +170,6 @@
     </Compile>
     <Compile Include="Models\DAL\DataServices.cs" />
     <Compile Include="Models\Ingredient.cs" />
-    <Compile Include="Models\IngredientsInRecipes.cs" />
     <Compile Include="Models\PostRecipe.cs" />
     <Compile Include="Models\Recipe.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
