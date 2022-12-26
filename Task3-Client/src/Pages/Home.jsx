@@ -4,33 +4,11 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { getRecipes } from "../Api";
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
-import Box from '@mui/material/Box';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
+import { IngredientInRecipe } from "./IngredientInRecipe"
 
-const Ingredient = ({ingredient}) => {
-  return (
-    <Card sx={{ display: 'flex', margin: '20px 10px', alignItems: 'center' }} key={ingredient["Name"]}>
-    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-      <CardContent sx={{ flex: '1 0 auto' }}>
-        <Typography component="div" variant="h5">
-          {ingredient["Name"]}
-        </Typography>
-        <Typography variant="subtitle1" color="text.secondary" component="div">
-        {ingredient["Calories"]} Calories
-        </Typography>
-      </CardContent>
-    </Box>
-    <CardMedia
-      component="img"
-      sx={{ height: 100 }}
-      image={ingredient["Image"]}
-      alt={ingredient["Name"]}
-    />
-  </Card>
-  );
-}
 
 export default function Home() {
   const [recipesList, setRecipesList] = useState();
@@ -87,7 +65,7 @@ const sumCalories = (result) => {
                         <b>Ingredients:</b> <br />
                         {recipe["Ingredients"].map((ingredient) => (
                           <>
-                          <Ingredient ingredient={ingredient} key={recipe["Name"]} />
+                          <IngredientInRecipe ingredient={ingredient} key={recipe["Name"]} />
                           </>
                         ))}
                       </Typography>
